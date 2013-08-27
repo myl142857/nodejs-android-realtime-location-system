@@ -1,5 +1,7 @@
 package com.rocktest.nodejstest;
 
+import static com.rocktest.nodejstest.CommonUtilities.SENDER_ID;
+import static com.rocktest.nodejstest.CommonUtilities.displayMessage;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,11 +11,6 @@ import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
-import com.rocktest.nodejstest.MainActivity;
-import com.rocktest.nodejstest.R;
-
-import static com.rocktest.nodejstest.CommonUtilities.SENDER_ID;
-import static com.rocktest.nodejstest.CommonUtilities.displayMessage;
 
 public class GCMIntentService extends GCMBaseIntentService{
     @SuppressWarnings("hiding")
@@ -22,7 +19,7 @@ public class GCMIntentService extends GCMBaseIntentService{
     public GCMIntentService() {
         super(SENDER_ID);
     }
-
+ 
     @Override
     protected void onRegistered(Context context, String registrationId) {
         Log.i(TAG, "Device registered: regId = " + registrationId);
