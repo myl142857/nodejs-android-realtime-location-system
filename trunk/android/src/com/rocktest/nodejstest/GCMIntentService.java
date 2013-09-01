@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
@@ -44,7 +45,10 @@ public class GCMIntentService extends GCMBaseIntentService{
     protected void onMessage(Context context, Intent intent) {
         Log.i(TAG, "Received message");
         // notifies user
-        generateNotification(context, "this is message");
+        //generateNotification(context, "this is message");
+        Bundle message = intent.getExtras();
+        String notificationMessage = message.getString("hi");
+        generateNotification(context, notificationMessage);
     }
 
     @Override

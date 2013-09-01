@@ -15,12 +15,6 @@
   - under the License.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <!-- Typically, an application registers automatically, so options below
-         are disabled. Uncomment them if you want to manually register or
-         unregister the device (you will also need to uncomment the equivalent
-         options on DemoActivity.onOptionsItemSelected())
-    -->
     
     <item
         android:id="@+id/options_register"
@@ -30,7 +24,6 @@
         android:id="@+id/options_unregister"
         android:title="@string/options_unregister">
     </item>
-    
     <item
         android:id="@+id/options_clear"
         android:title="@string/options_clear">
@@ -38,6 +31,10 @@
     <item
         android:id="@+id/options_exit"
         android:title="@string/options_exit">
+    </item>
+    <item 
+        android:id="@+id/options_send_location" 
+        android:title="@string/options_send_location">
     </item>
 
 </menu>
