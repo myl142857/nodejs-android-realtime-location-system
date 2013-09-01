@@ -15,16 +15,9 @@
  */
 package com.rocktest.nodejstest;
 
+import static com.rocktest.nodejstest.CommonUtilities.PHONE_NUMBER;
 import static com.rocktest.nodejstest.CommonUtilities.SERVER_URL;
 import static com.rocktest.nodejstest.CommonUtilities.TAG;
-import static com.rocktest.nodejstest.CommonUtilities.displayMessage;
-
-import static com.rocktest.nodejstest.MainActivity.phoneNumber;
-
-import com.google.android.gcm.GCMRegistrar;
-
-import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,6 +29,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
+import android.content.Context;
+import android.location.Location;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+
+import com.google.android.gcm.GCMRegistrar;
 
 /**
  * Helper class used to communicate with the demo server.
@@ -57,7 +57,7 @@ public final class ServerUtilities {
         Map<String, String> params = new HashMap<String, String>();
         
         params.put("regId", regId);
-        params.put("phoneNumber", phoneNumber);
+        params.put("phoneNumber", PHONE_NUMBER);
         
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
@@ -65,10 +65,12 @@ public final class ServerUtilities {
             try {
                 CommonUtilities.displayMessage(context, context.getString(
                         R.string.server_registering, i, MAX_ATTEMPTS));
-                post(serverUrl, params);
+                String returnString = post(serverUrl, params);
                 GCMRegistrar.setRegisteredOnServer(context, true);
                 String message = context.getString(R.string.server_registered);
                 CommonUtilities.displayMessage(context, message);
+                CommonUtilities.displayMessage(context, returnString);
+                
                 return true;
             } catch (IOException e) {
                 Log.e(TAG, "Failed to register on attempt " + i, e);
@@ -99,12 +101,19 @@ public final class ServerUtilities {
         Log.i(TAG, "unregistering device (regId = " + regId + ")");
         String serverUrl = SERVER_URL + "/unregister";
         Map<String, String> params = new HashMap<String, String>();
+        
+        TelephonyManager systemService = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        String phoneNumber = systemService.getLine1Number();
+        
         params.put("regId", regId);
+        params.put("phoneNumber", phoneNumber);
+        
         try {
-            post(serverUrl, params);
+            String returnMessage = post(serverUrl, params);
             GCMRegistrar.setRegisteredOnServer(context, false);
             String message = context.getString(R.string.server_unregistered);
             CommonUtilities.displayMessage(context, message);
+            CommonUtilities.displayMessage(context, returnMessage);
         } catch (IOException e) {
             // At this point the device is unregistered from GCM, but still
             // registered in the server.
@@ -125,7 +134,7 @@ public final class ServerUtilities {
      *
      * @throws IOException propagated from POST.
      */
-    private static void post(String endpoint, Map<String, String> params)
+    private static String post(String endpoint, Map<String, String> params)
             throws IOException {
         URL url;
         try {
@@ -162,13 +171,62 @@ public final class ServerUtilities {
             out.close();
             // handle the response
             int status = conn.getResponseCode();
+        
             if (status != 200) {
               throw new IOException("Post failed with error code " + status);
             }
+           String message = conn.getResponseMessage();
+           return message;
+            
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
         }
       }
+
+	static boolean sendLocation(MainActivity context) {
+		// TODO Auto-generated method stub
+		Location location = context.checkMyLocation();
+		String location_str= location.getLatitude() + "," + location.getLongitude();
+       
+       String serverUrl = SERVER_URL + "/register";
+        Map<String, String> params = new HashMap<String, String>();
+        
+        params.put("phoneNumber", PHONE_NUMBER);
+        
+        long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            Log.d(TAG, "Attempt #" + i + " to register");
+            try {
+                CommonUtilities.displayMessage(context, context.getString(
+                        R.string.server_registering, i, MAX_ATTEMPTS));
+                String returnString = post(serverUrl, params);
+                GCMRegistrar.setRegisteredOnServer(context, true);
+                String message = context.getString(R.string.server_registered);
+                CommonUtilities.displayMessage(context, message);
+                CommonUtilities.displayMessage(context, returnString);
+                
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to register on attempt " + i, e);
+                if (i == MAX_ATTEMPTS) {
+                    break;
+                }
+                try {
+                    Log.d(TAG, "Sleeping for " + backoff + " ms before retry");
+                    Thread.sleep(backoff);
+                } catch (InterruptedException e1) {
+                    Log.d(TAG, "Thread interrupted: abort remaining retries!");
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+             backoff *= 2;
+            }
+        }
+        String message = context.getString(R.string.server_register_error,
+                MAX_ATTEMPTS);
+        CommonUtilities.displayMessage(context, message);
+        return false;
+	}
 }

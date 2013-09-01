@@ -17,6 +17,7 @@ package com.rocktest.nodejstest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 
 public final class CommonUtilities {
 
@@ -30,6 +31,8 @@ public final class CommonUtilities {
             "com.rocktest.nodejstest.DISPLAY_MESSAGE";
 
     static final String EXTRA_MESSAGE = "message";
+    
+    static String PHONE_NUMBER = "";
 
     static void displayMessage(Context context, String message) {
         Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);

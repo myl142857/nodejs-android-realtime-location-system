@@ -3,6 +3,8 @@ var common = require('./common/common.js')
 var redis_conn = require('redis');
 var redis = redis_conn.createClient();
 
+var gcm = require('node-gcm');
+
 redis.on('error', function(error){
   consol.log("Error: "+ error);
 });
@@ -14,46 +16,74 @@ exports.regist = function (req, res) {
     "regId" : req.body.regId
   };
 
-  var userKey = common.makeUserKey(req.body.phoneNumber);
+  var userKey = common.makeUserKey(data.phoneNumber);
+	if(!userKey){
+		common.consoleError("phoneNumber is null");
+		res.end();
+		return;
+	}
 
   redis.hmset(userKey, data, function(error){
     if (error) {
       common.sendError(error, res);
       common.consoleError(error);
-
-      res.end();
     }else{
       common.sendJson("regist ok", res);
-      res.end();
     }
+    res.end();
   });
+}
+
+exports.unregist = function (req, res){
+	var data = {
+		"phoneNumber" : req.body.phoneNumber,
+		"regId" : req.body.regId
+	};
+
+	var userKey = common.makeUserKey(data.phoneNumber);
+	if(!userKey){
+		common.consoleError("phoneNumber is null");
+		res.end();
+		return;
+	}
+
+	redis.hdel(userKey, data, function(error){
+		if(error){
+			common.sendError(error, res);
+			common.consoleError(error);
+		}else{
+			common.sendJson("unregist ok", res);
+		}
+
+		res.end();
+	});
 }
 
 exports.send = function (req, res) {
 	var userKey = common.makeUserKey(req.body.phoneNumber);
 
-	redis.hmgetall(userKey, function(error, data){
+	redis.hgetall(userKey, function(error, data){
 		var message = new gcm.Message();
 		var sender = new gcm.Sender('AIzaSyB8Pmbktp_SiGOWJ-XwQTvYmE9hNZCDOX8');
 		var registrationIds = [];
 
-		for(var i in data){
-			registrationIds.push(data[i].regId);
-		}
+		registrationIds.push(data.regId);
 		message.addData("hi", "hello");
 		message.collapseKey = 'demo';
 		message.delayWhileIdle = true;
 		message.timeToLive = 3;
 
+		sender.send(message, registrationIds, 4, function (err, result) {
+				console.log(result);
+				res.write("done");
+				res.end();
+		});
 	});
-	var message = new gcm.Message();
+}
 
-	sender.send(message, registrationIds, 4, function (err, result) {
-			console.log(result);
-			res.write("done");
-			res.end();
-	});
-
+exports.location = function(req, res){
+	res.write("asdf");
+	res.end();
 }
 
 exports.get_user = function(req, res){
