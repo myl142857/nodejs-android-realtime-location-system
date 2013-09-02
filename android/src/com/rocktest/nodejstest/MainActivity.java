@@ -25,7 +25,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gcm.GCMRegistrar;
 
 public class MainActivity extends Activity {
