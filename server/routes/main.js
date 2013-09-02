@@ -82,8 +82,27 @@ exports.send = function (req, res) {
 }
 
 exports.location = function(req, res){
-	res.write("asdf");
-	res.end();
+	var data = {
+		"location" : req.body.location
+	};
+
+  var userKey = common.makeUserKey(req.body.phoneNumber);
+	if(!userKey){
+		common.consoleError("phoneNumber is null");
+		res.end();
+		return;
+	}
+
+  redis.hmset(userKey, data, function(error){
+    if (error) {
+      common.sendError(error, res);
+      common.consoleError(error);
+    }else{
+      common.sendJson("save location", res);
+			console.log(data.location);
+    }
+    res.end();
+  });
 }
 
 exports.get_user = function(req, res){
