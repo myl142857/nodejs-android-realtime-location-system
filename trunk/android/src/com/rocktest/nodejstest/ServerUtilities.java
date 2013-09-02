@@ -29,7 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.google.android.gcm.GCMRegistrar;
@@ -138,7 +140,7 @@ public final class ServerUtilities {
             url = new URL(endpoint);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("invalid url: " + endpoint);
-        }
+         }
         StringBuilder bodyBuilder = new StringBuilder();
         Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
         // constructs the POST body using the parameters
@@ -155,54 +157,53 @@ public final class ServerUtilities {
         byte[] bytes = body.getBytes();
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setFixedLengthStreamingMode(bytes.length);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded;charset=UTF-8");
-            // post the request
-            OutputStream out = conn.getOutputStream();
-            out.write(bytes);
-            out.close();
-            // handle the response
-            int status = conn.getResponseCode();
+        	conn = (HttpURLConnection) url.openConnection();
+        	conn.setDoOutput(true);
+        	conn.setUseCaches(false);
+        	conn.setFixedLengthStreamingMode(bytes.length);
+        	conn.setRequestMethod("POST");
+        	conn.setRequestProperty("Content-Type",
+        			"application/x-www-form-urlencoded;charset=UTF-8");
+        	//post the request
+        	OutputStream out = conn.getOutputStream();
+        	out.write(bytes);
+        	out.close();
+        	//handle the response
+        	int status = conn.getResponseCode();
         
-            if (status != 200) {
-              throw new IOException("Post failed with error code " + status);
-            }
-           String message = conn.getResponseMessage();
-           return message;
-            
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+          if (status != 200) {
+        	  throw new IOException("Post failed with error code " + status);
+          	}
+          String message = conn.getResponseMessage();
+          return message;
+       } finally {
+        	if (conn != null) {
+        		conn.disconnect();
+        	}
         }
-      }
+    }
 
-	static boolean sendLocation(MainActivity context) {
+	static boolean sendLocation(Context context, String phoneNumber) {
 		// TODO Auto-generated method stub
-		Location location = context.checkMyLocation();
+		Location location = checkMyLocation(context);
 		String location_str= location.getLatitude() + "," + location.getLongitude();
        
-       String serverUrl = SERVER_URL + "/register";
-        Map<String, String> params = new HashMap<String, String>();
+       String serverUrl = SERVER_URL + "/location";
+       Map<String, String> params = new HashMap<String, String>();
         
-        params.put("phoneNumber", PHONE_NUMBER);
+       params.put("phoneNumber", phoneNumber);
+       params.put("location", location_str);
         
-        long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Log.d(TAG, "Attempt #" + i + " to register");
-            try {
-                CommonUtilities.displayMessage(context, context.getString(
-                        R.string.server_registering, i, MAX_ATTEMPTS));
-                String returnString = post(serverUrl, params);
-                GCMRegistrar.setRegisteredOnServer(context, true);
-                String message = context.getString(R.string.server_registered);
-                CommonUtilities.displayMessage(context, message);
-                CommonUtilities.displayMessage(context, returnString);
+       long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
+       for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+           Log.d(TAG, "Attempt #" + i + " to register");
+           try {
+               CommonUtilities.displayMessage(context, context.getString(
+                       R.string.server_registering, i, MAX_ATTEMPTS));
+               String returnString = post(serverUrl, params);
+               String message = context.getString(R.string.server_registered);
+               CommonUtilities.displayMessage(context, message);
+               CommonUtilities.displayMessage(context, returnString);
                 
                 return true;
             } catch (IOException e) {
@@ -221,9 +222,35 @@ public final class ServerUtilities {
              backoff *= 2;
             }
         }
-        String message = context.getString(R.string.server_register_error,
-                MAX_ATTEMPTS);
-        CommonUtilities.displayMessage(context, message);
-        return false;
+       String message = context.getString(R.string.server_register_error,
+               MAX_ATTEMPTS);
+       CommonUtilities.displayMessage(context, message);
+       return false;
 	}
+	 public static Location checkMyLocation(Context context){
+	    	LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+	    	Criteria criteria = new Criteria();
+	    	Location location = null;
+	    	
+	    	String provider = locationManager.getBestProvider(criteria, true);
+	    	//locationManager.requestLocationUpdates(provider, 10000, 100, new LocationService());
+	    	
+	    	if(provider == null){ //gps off이면 network통해서 받아오도록..
+	    		Toast.makeText(context, "no GPS Provider", Toast.LENGTH_SHORT).show();
+	    		provider = LocationManager.NETWORK_PROVIDER;
+	    		location = locationManager.getLastKnownLocation(provider);
+	    	}
+	    	
+	    	location = locationManager.getLastKnownLocation(provider);
+	    	
+	    	if(location == null){
+	    		try{
+	    			Thread.sleep(10000);
+	    		}catch(InterruptedException e){
+	    			e.printStackTrace();
+	    		}
+	    		location = locationManager.getLastKnownLocation(provider);
+	    	}
+	    	return location;
+	    }
 }

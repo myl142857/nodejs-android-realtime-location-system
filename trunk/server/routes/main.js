@@ -1,4 +1,5 @@
 var common = require('./common/common.js')
+var gcm = require('node-gcm')
 
 var redis_conn = require('redis');
 var redis = redis_conn.createClient();
@@ -60,11 +61,12 @@ exports.unregist = function (req, res){
 }
 
 exports.send = function (req, res) {
-	var userKey = common.makeUserKey(req.body.phoneNumber);
+	var userKey = common.makeUserKey(req.params.phoneNumber);
 
 	redis.hgetall(userKey, function(error, data){
 		var message = new gcm.Message();
 		var sender = new gcm.Sender('AIzaSyB8Pmbktp_SiGOWJ-XwQTvYmE9hNZCDOX8');
+//		var sender = new gcm.Sender('AIzaSyD0gTUNasSylOs8-u0NqeDn5NuO08PmGEg');
 		var registrationIds = [];
 
 		registrationIds.push(data.regId);
@@ -80,7 +82,6 @@ exports.send = function (req, res) {
 		});
 	});
 }
-
 exports.location = function(req, res){
 	var data = {
 		"location" : req.body.location
@@ -124,4 +125,3 @@ exports.get_user = function(req, res){
       res.end();
     }
   });
-}

@@ -30,6 +30,7 @@ import com.google.android.gcm.GCMRegistrar;
 public class MainActivity extends Activity {
 	TextView mDisplay;
     AsyncTask<Void, Void, Void> mRegisterTask;
+    AsyncTask<Void, Void, Void> mSendLocationTask;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +115,24 @@ public class MainActivity extends Activity {
             	}
               return true;
             case R.id.options_send_location:
-            	if(!GCMRegistrar.isRegisteredOnServer(this)){
-            		GCMRegistrar.register(this, SENDER_ID);
-            	}else{
-            		ServerUtilities.sendLocation(this);
-            	}
+            	final Context context = this;
+         	   
+         	   mSendLocationTask = new AsyncTask<Void, Void, Void>() {
+         		   @Override
+         		   protected Void doInBackground(Void... params) {
+         			   boolean sendResult =
+                                 ServerUtilities.sendLocation(context, PHONE_NUMBER);
+         			   if(!sendResult){
+         				   CommonUtilities.displayMessage(context, "send location Error");
+         			   }
+         			   return null;
+         			   }
+         		   @Override
+         		   protected void onPostExecute(Void result) {
+         			  mSendLocationTask = null;
+         			   }
+         		   };
+         		  mSendLocationTask.execute(null, null, null);
             	
              return true;
             case R.id.options_clear:
@@ -140,6 +154,9 @@ public class MainActivity extends Activity {
     	if(mHandleMessageReceiver != null){
     		unregisterReceiver(mHandleMessageReceiver);
     	}
+    	if (mSendLocationTask != null) {
+    		mSendLocationTask.cancel(true);
+        }
        
     	//GCMRegistrar.onDestroy(this);
     	super.onDestroy();
@@ -161,30 +178,5 @@ public class MainActivity extends Activity {
         }
     };
     
-    public Location checkMyLocation(){
-    	LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-    	Criteria criteria = new Criteria();
-    	Location location = null;
-    	
-    	String provider = locationManager.getBestProvider(criteria, true);
-    	//locationManager.requestLocationUpdates(provider, 10000, 100, new LocationService());
-    	
-    	if(provider == null){ //gps off이면 network통해서 받아오도록..
-    		Toast.makeText(getBaseContext(), "no GPS Provider", Toast.LENGTH_SHORT).show();
-    		provider = LocationManager.NETWORK_PROVIDER;
-    		location = locationManager.getLastKnownLocation(provider);
-    	}
-    	
-    	location = locationManager.getLastKnownLocation(provider);
-    	
-    	if(location == null){
-    		try{
-    			Thread.sleep(10000);
-    		}catch(InterruptedException e){
-    			e.printStackTrace();
-    		}
-    		location = locationManager.getLastKnownLocation(provider);
-    	}
-    	return location;
-    }
+   
 }
