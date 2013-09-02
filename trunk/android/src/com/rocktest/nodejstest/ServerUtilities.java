@@ -18,7 +18,6 @@ package com.rocktest.nodejstest;
 import static com.rocktest.nodejstest.CommonUtilities.PHONE_NUMBER;
 import static com.rocktest.nodejstest.CommonUtilities.SERVER_URL;
 import static com.rocktest.nodejstest.CommonUtilities.TAG;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -29,12 +28,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-
 import android.content.Context;
 import android.location.Location;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import com.google.android.gcm.GCMRegistrar;
 
 /**
