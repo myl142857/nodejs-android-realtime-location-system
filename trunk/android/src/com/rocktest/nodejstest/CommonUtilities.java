@@ -18,11 +18,11 @@ package com.rocktest.nodejstest;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 
 public final class CommonUtilities {
 
-    static final String SERVER_URL = "http://chicrock.iptime.org:3030";
+    //static final String SERVER_URL = "http://chicrock.iptime.org:3030";
+	static final String SERVER_URL = "localhost:3030";
 
     static final String SENDER_ID = "21670682387";
 
