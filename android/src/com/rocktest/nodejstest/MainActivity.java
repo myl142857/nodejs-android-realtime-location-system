@@ -12,19 +12,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.android.gcm.GCMRegistrar;
 
 public class MainActivity extends Activity {
@@ -81,15 +75,6 @@ public class MainActivity extends Activity {
         }
     }
     
-    private class WebViewClientClass extends WebViewClient {
-    	@Override
-    	public boolean shouldOverrideUrlLoading(WebView view, String url){
-    		view.loadUrl(url);
-    		return true;
-    	}
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	//Inflate the menu; this adds items to the action bar if it is present.

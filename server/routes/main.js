@@ -125,3 +125,4 @@ exports.get_user = function(req, res){
       res.end();
     }
   });
+}
