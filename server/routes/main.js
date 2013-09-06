@@ -1,38 +1,32 @@
-var common = require('./common/common.js')
-var gcm = require('node-gcm')
-
-var redis_conn = require('redis');
-var redis = redis_conn.createClient();
-
+var common = require('./common/common.js');
 var gcm = require('node-gcm');
 
-redis.on('error', function(error){
-  consol.log("Error: "+ error);
-});
+var dbc = require('./common/mysql.js');
 
-
-exports.regist = function (req, res) {
+exports.regist = function(req, res){
   var data = {
     "phoneNumber" : req.body.phoneNumber,
     "regId" : req.body.regId
   };
 
-  var userKey = common.makeUserKey(data.phoneNumber);
-	if(!userKey){
-		common.consoleError("phoneNumber is null");
-		res.end();
-		return;
-	}
+	var random = new Date().toISOString();
 
-  redis.hmset(userKey, data, function(error){
-    if (error) {
-      common.sendError(error, res);
-      common.consoleError(error);
-    }else{
-      common.sendJson("regist ok", res);
-    }
-    res.end();
-  });
+	dbc.conn.query("insert into test (idtest) values('"+random+"')", function(error, rows){
+		if(error){
+			console.log(error);
+		}
+		res.write('insert ok');
+		res.end();
+	});
+}
+
+/*
+redis.on('error', function(error){
+  console.log("Error: "+ error);
+});
+
+
+exports.regist = function (req, res) {
 }
 
 exports.unregist = function (req, res){
@@ -126,3 +120,4 @@ exports.get_user = function(req, res){
     }
   });
 }
+*/
