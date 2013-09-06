@@ -35,9 +35,9 @@ app.get('/test', test.index);
 var main = require('./routes/main');
 
 app.post('/register', main.regist);
-app.post('/unregister', main.unregist);
-app.post('/send', main.send);
-app.post('/location', main.location);
+//app.post('/unregister', main.unregist);
+//app.post('/send', main.send);
+//app.post('/location', main.location);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
