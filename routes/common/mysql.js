@@ -1,12 +1,8 @@
-var mysql = require('mysql');
+var mysql = require('mysql-activerecord');
 
-var mysqlConfig = {
-//	host : "182.162.143.141",
-	host : "localhost",
-	port : "3306",
-	user : "nodejs",
-	password : "rlarbfl!@#",
-	database : "nodejs"
-};
-
-exports.conn = mysql.createConnection(mysqlConfig);
+exports.conn = new mysql.Adapter({
+	server : 'localhost',
+	username : 'nodejs',
+	password : 'rlarbfl!@#',
+	database : 'nodejs'
+});

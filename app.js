@@ -35,7 +35,7 @@ app.get('/test', test.index);
 var main = require('./routes/main');
 
 app.post('/register', main.regist);
-//app.post('/unregister', main.unregist);
+app.post('/unregister', main.unregist);
 //app.post('/send', main.send);
 //app.post('/location', main.location);
 
