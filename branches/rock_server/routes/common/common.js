@@ -28,3 +28,17 @@ exports.isNull = function(str){
 		return true;
 	}
 }
+
+exports.makeMessage = function(res, status, type, code, msg){
+	var response = {};
+	if(status == 'success'){
+		response.status = 0;
+		response.message = msg;
+	}else{
+		response.status = code;
+		response.error_type = type;
+		response.error_message = msg;
+	}
+
+	res.send(JSON.stringify(response));
+}
