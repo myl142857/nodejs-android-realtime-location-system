@@ -4,9 +4,7 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , test = require('./routes/test')
+  , main = require('./routes/main')
   , http = require('http')
   , path = require('path');
 
@@ -27,12 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
-
-app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/test', test.index);
-
-var main = require('./routes/main');
 
 app.post('/register', main.regist);
 app.post('/unregister', main.unregist);
