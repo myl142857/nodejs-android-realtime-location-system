@@ -34,7 +34,7 @@ exports.makeMessage = function(res, status, data){
 	if(status == 'success'){
 		response.status = 0;
 	}else{
-		response.status = code;
+		response.status = status;
 	}
 	if(data == undefined || !data.length){
 		response.data = {data:"NODATA"};

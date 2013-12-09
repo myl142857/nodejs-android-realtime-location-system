@@ -111,8 +111,8 @@ exports.send = function (req, res) {
 
 	redis.hgetall(userKey, function(error, data){
 		var message = new gcm.Message();
-		var sender = new gcm.Sender('AIzaSyB8Pmbktp_SiGOWJ-XwQTvYmE9hNZCDOX8');
-//		var sender = new gcm.Sender('AIzaSyD0gTUNasSylOs8-u0NqeDn5NuO08PmGEg');
+		var sender = new gcm.Sender('AIzaSyD2h2Ji79Do0SM9r153c1j3JdDmceP6nRo');
+//		var sender = new gcm.Sender('AIzaSyD2h2Ji79Do0SM9r153c1j3JdDmceP6nRo');
 		var registrationIds = [];
 
 		registrationIds.push(data.regId);
