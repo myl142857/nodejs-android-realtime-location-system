@@ -26,7 +26,7 @@ exports.regist = function(req, res){
 							dbc.conn.where({ phone: req.body.phoneNumber })
 								.update('user_phone', { regId : req.body.regId}, function(error){
 									if(error){
-										common.makeMessage(res, 'error', 'db_insert', error.errno, 'DB Insert Error');
+										common.makeMessage(res, 'error');
 										res.end();
 									}else{
 										console.log('--------------------------------------');
@@ -39,7 +39,7 @@ exports.regist = function(req, res){
 						}
 				});
 			}else{
-					common.makeMessage(res, 'error', 'db_insert', error.errno, 'DB Insert Error');
+					common.makeMessage(res, 'error');
 					res.end();
 			}
 		}else{
@@ -62,7 +62,7 @@ exports.unregist = function(req, res){
 		.delete('user_phone', function(error){
 			if(error){
 				console.log('Delete Error');
-				common.makeMessage(res, 'error', 'db_delete', error.errno, "DB Delete Error");
+				common.makeMessage(res, 'error');
 				res.end();
 			}else{
 				console.log('Delete Ok');

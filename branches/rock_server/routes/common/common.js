@@ -29,15 +29,17 @@ exports.isNull = function(str){
 	}
 }
 
-exports.makeMessage = function(res, status, type, code, msg){
+exports.makeMessage = function(res, status, data){
 	var response = {};
 	if(status == 'success'){
 		response.status = 0;
-		response.message = msg;
 	}else{
 		response.status = code;
-		response.error_type = type;
-		response.error_message = msg;
+	}
+	if(data == undefined || !data.length){
+		response.data = {data:"NODATA"};
+	}else{
+		response.data = data;
 	}
 
 	res.send(JSON.stringify(response));
