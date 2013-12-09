@@ -22,7 +22,8 @@ import android.content.Intent;
 public final class CommonUtilities {
 
     //static final String SERVER_URL = "http://chicrock.iptime.org:3030";
-	static final String SERVER_URL = "localhost:3030";
+	//static final String SERVER_URL = "localhost:3030";
+	static final String SERVER_URL = "182.162.143.141:3030";
 
     static final String SENDER_ID = "21670682387";
 
