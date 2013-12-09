@@ -1,7 +1,7 @@
-package com.rocktest.nodejstest;
+package com.rk.nars.services;
 
-import static com.rocktest.nodejstest.CommonUtilities.SENDER_ID;
-import static com.rocktest.nodejstest.CommonUtilities.displayMessage;
+import static com.rk.nars.utils.CommonUtils.SENDER_ID;
+import static com.rk.nars.utils.CommonUtils.displayMessage;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,14 +9,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
+import com.rk.nars.activities.MainActivity;
+import com.rk.nars.utils.ServerUtils;
+import com.rk.nars.R;
 
-public class GCMIntentService extends GCMBaseIntentService{
-    @SuppressWarnings("hiding")
-    private static final String TAG = "GCMIntentService";
+public class GcmService extends GCMBaseIntentService{
+    private static final String TAG = "GcmService";
 
-    public GCMIntentService() {
+    public GcmService() {
         super(SENDER_ID);
     }
  
@@ -24,7 +27,7 @@ public class GCMIntentService extends GCMBaseIntentService{
     protected void onRegistered(Context context, String registrationId) {
         Log.i(TAG, "Device registered: regId = " + registrationId);
         displayMessage(context, getString(R.string.gcm_registered));
-        ServerUtilities.register(context, registrationId);
+        ServerUtils.register(context, registrationId);
     }
 
     @Override
@@ -32,7 +35,7 @@ public class GCMIntentService extends GCMBaseIntentService{
         Log.i(TAG, "Device unregistered");
         displayMessage(context, getString(R.string.gcm_unregistered));
         if (GCMRegistrar.isRegisteredOnServer(context)) {
-            ServerUtilities.unregister(context, registrationId);
+            ServerUtils.unregister(context, registrationId);
         } else {
             // This callback results from the call to unregister made on
             // ServerUtilities when the registration to the server failed.
