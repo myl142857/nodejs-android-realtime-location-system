@@ -1,75 +1,64 @@
-var common = require('./common/common.js');
-var gcm = require('node-gcm');
+var common = require('./common/common');
+var message = require('./common/message');
+var gcm = require('./common/gcm');
+var token = require('./common/token');
 
-var dbc = require('./common/mysql.js');
+var registmodel = require('./model/registmodel');
 
 exports.regist = function(req, res){
-	req.body.phoneNumber = req.body.phoneNumber.split('-').join('');
+	if(req.body.phoneNumber == undefined){
+		message.sendMessage(res, "0001", "phoneNumber");
+		res.end();
+		return false;
+	}
+	var phoneNumber = req.body.phoneNumber;
+	var makePhoneResult = common.makePhoneNumber(phoneNumber);
+
+	if(makePhoneResult.status != "0000"){
+		message.sendMessage(res, makePhoneResult.status, "phoneNumber");
+		res.end();
+		return false;
+	}
+
+	req.body.phoneNumber = makePhoneResult.data;
+
+	var access_token = token.getAccessToken(req.body.phoneNumber, req.body.regId);
+
   var data = {
     "phone" : req.body.phoneNumber,
-    "regId" : req.body.regId
+    "regId" : req.body.regId,
+		"access_token" : access_token
   };
 
-	dbc.conn.insert('user_phone', data, function(error, info){
-		if(error){
-			if(error.code == 'ER_DUP_ENTRY'){
-				dbc.conn.where({ phone: req.body.phoneNumber })
-					.get('user_phone', function(error, results, fields){
-						var insertedRegId = results.regId;
-						if(insertedRegId == req.body.regId){
-							console.log('--------------------------------------');
-							console.log('user_phone insert ok');
-							console.log('already exists');
-							common.makeMessage(res, 'success');
-							res.end();
-						}else{
-							dbc.conn.where({ phone: req.body.phoneNumber })
-								.update('user_phone', { regId : req.body.regId}, function(error){
-									if(error){
-										common.makeMessage(res, 'error');
-										res.end();
-									}else{
-										console.log('--------------------------------------');
-										console.log('user_phone insert ok');
-										console.log('update regId');
-										common.makeMessage(res, 'success');
-										res.end();
-									}
-							});
-						}
-				});
-			}else{
-					common.makeMessage(res, 'error');
-					res.end();
-			}
-		}else{
-			console.log('--------------------------------------');
-			console.log('user_phone insert ok');
-			console.log('user_phone Data => ');
-			console.log(data);
-			common.makeMessage(res, 'success');
-
-			res.end();
-		}
-	});
+	registmodel.registPhone(data, res);
 }
 
 exports.unregist = function(req, res){
-	var data = {
-		'phone' : req.body.phoneNumber
+	if(req.body.phoneNumber == undefined){
+		message.sendMessage(res, "0001", "phoneNumber");
+		res.end();
+		return false;
 	}
-	dbc.conn.where(data)
-		.delete('user_phone', function(error){
-			if(error){
-				console.log('Delete Error');
-				common.makeMessage(res, 'error');
-				res.end();
-			}else{
-				console.log('Delete Ok');
-				common.makeMessage(res, 'success');
-				res.end();
-			}
-	});
+	var phoneNumber = req.body.phoneNumber;
+	var makePhoneResult = common.makePhoneNumber(phoneNumber);
+
+	if(makePhoneResult.status != "0000"){
+		message.sendMessage(res, makePhoneResult.status, "phoneNumber");
+		res.end();
+		return false;
+	}
+	if(req.body.access_token == undefined){
+		message.sendMessage(res, "0003", "access_token");
+		res.end();
+		return false;
+	}
+
+	var data = {
+		'phone' : makePhoneResult.data,
+		'access_token' : req.body.access_token
+	}
+
+	registmodel.unregistPhone(data, res);
 }
 
 /*
