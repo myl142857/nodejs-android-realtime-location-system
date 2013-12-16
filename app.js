@@ -4,7 +4,7 @@
  */
 
 var express = require('express')
-  , main = require('./routes/main')
+  , regist = require('./routes/regist')
   , http = require('http')
   , path = require('path');
 
@@ -26,8 +26,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.post('/register', main.regist);
-app.post('/unregister', main.unregist);
+app.post('/register', regist.regist);
+app.post('/unregister', regist.unregist);
 //app.post('/send', main.send);
 //app.post('/location', main.location);
 

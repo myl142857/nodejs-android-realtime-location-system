@@ -1,3 +1,7 @@
+String.prototype.trim = function(){
+	return this.replace(/^\s+|\s+$/g, "");
+};
+
 exports.makeUserKey = function(phoneNumber){
 	if(this.isNull(phoneNumber)){
 		return false;
@@ -9,38 +13,38 @@ exports.consoleError = function(error){
   console.log("Error: "+error);
 }
 
-exports.sendError = function(error, res){
-  res.send("Error: " +error);
-}
-
 exports.sendJson = function(data, res){
   res.send(JSON.stringify(data));
 }
 
-exports.isNull = function(str){
+exports.isEmpty = function(str){
 	if(str == undefined){
 		return true;
 	}
-	if(str.length < 1){
+	var mString = new String(str);
+	if(mString.length < 1){
 		return true;
 	}
-	if(str.split(' ').join('') == ''){
+	if(mString.split(' ').join('') == ''){
 		return true;
 	}
 }
 
-exports.makeMessage = function(res, status, data){
-	var response = {};
-	if(status == 'success'){
-		response.status = 0;
-	}else{
-		response.status = status;
-	}
-	if(data == undefined || !data.length){
-		response.data = {data:"NODATA"};
-	}else{
-		response.data = data;
+exports.makePhoneNumber = function(phoneNumber){
+	var returnData = "";
+	if(this.isEmpty(phoneNumber)){
+		return {status:0001};
 	}
 
-	res.send(JSON.stringify(response));
+	if(this.isEmpty(phoneNumber.trim())){
+		return {status:0002};
+	}
+
+	returnData = phoneNumber.split('-').join('');
+
+	if(isNaN(returnData)){
+		return {status:0002};
+	}
+	
+	return {status:0000, data:returnData};
 }
