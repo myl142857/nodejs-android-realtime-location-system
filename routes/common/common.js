@@ -33,18 +33,18 @@ exports.isEmpty = function(str){
 exports.makePhoneNumber = function(phoneNumber){
 	var returnData = "";
 	if(this.isEmpty(phoneNumber)){
-		return {status:0001};
+		return {status:"0001"};
 	}
 
 	if(this.isEmpty(phoneNumber.trim())){
-		return {status:0002};
+		return {status:"0002"};
 	}
 
 	returnData = phoneNumber.split('-').join('');
 
 	if(isNaN(returnData)){
-		return {status:0002};
+		return {status:"0002"};
 	}
 	
-	return {status:0000, data:returnData};
+	return {status:"0000", data:returnData};
 }

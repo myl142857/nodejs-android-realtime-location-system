@@ -1,12 +1,12 @@
-
 /**
  * Module dependencies.
  */
 
 var express = require('express')
-  , regist = require('./routes/regist')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , regist = require('./routes/regist')
+	, user = require('./routes/user');
 
 var app = express();
 
@@ -26,8 +26,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.post('/register', regist.regist);
-app.post('/unregister', regist.unregist);
+app.post('/phone/regist', regist.regist);
+app.post('/phone/unregist', regist.unregist);
+
+app.post('/user/regist', user.regist);
+app.post('/user/unregist', user.unregist);
 //app.post('/send', main.send);
 //app.post('/location', main.location);
 
