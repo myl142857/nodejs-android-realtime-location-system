@@ -6,9 +6,8 @@ var token = require('./common/token');
 var registmodel = require('./model/registmodel');
 
 exports.regist = function(req, res){
-	if(req.body.phoneNumber == undefined){
+	if(common.isEmpty(req.body.phoneNumber)){
 		message.sendMessage(res, "0001", "phoneNumber");
-		res.end();
 		return false;
 	}
 	var phoneNumber = req.body.phoneNumber;
@@ -16,7 +15,6 @@ exports.regist = function(req, res){
 
 	if(makePhoneResult.status != "0000"){
 		message.sendMessage(res, makePhoneResult.status, "phoneNumber");
-		res.end();
 		return false;
 	}
 
@@ -30,13 +28,19 @@ exports.regist = function(req, res){
 		"access_token" : access_token
   };
 
+	if(!common.isEmpty(req.body.os_version)){
+		data.os_version = req.body.os_version;
+	}
+	if(!common.isEmpty(req.body.model_name)){
+		data.model_name = req.body.model_name;
+	}
+
 	registmodel.registPhone(data, res);
 }
 
 exports.unregist = function(req, res){
 	if(req.body.phoneNumber == undefined){
 		message.sendMessage(res, "0001", "phoneNumber");
-		res.end();
 		return false;
 	}
 	var phoneNumber = req.body.phoneNumber;
@@ -44,12 +48,10 @@ exports.unregist = function(req, res){
 
 	if(makePhoneResult.status != "0000"){
 		message.sendMessage(res, makePhoneResult.status, "phoneNumber");
-		res.end();
 		return false;
 	}
 	if(req.body.access_token == undefined){
 		message.sendMessage(res, "0003", "access_token");
-		res.end();
 		return false;
 	}
 

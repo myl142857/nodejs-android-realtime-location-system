@@ -25,4 +25,5 @@ exports.sendMessage = function(res, status, data){
 	}
 
 	res.send(JSON.stringify(response));
+	res.end();
 }
