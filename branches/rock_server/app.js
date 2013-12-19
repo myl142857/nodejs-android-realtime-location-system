@@ -5,7 +5,7 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , regist = require('./routes/regist')
+  , phone = require('./routes/phone')
 	, user = require('./routes/user');
 
 var app = express();
@@ -26,8 +26,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.post('/phone/regist', regist.regist);
-app.post('/phone/unregist', regist.unregist);
+app.post('/phone/regist', phone.regist);
+app.post('/phone/unregist', phone.unregist);
 
 app.post('/user/regist', user.regist);
 app.post('/user/unregist', user.unregist);
