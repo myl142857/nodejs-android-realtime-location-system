@@ -16,6 +16,7 @@ var status_msg = {
 exports.sendMessage = function(res, status, data){
 	var response = {};
 
+	response.code = status;
 	response.status = status_msg[status];
 
 	if(data == undefined || common.isEmpty(data)){
