@@ -5,8 +5,8 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , phone = require('./routes/phone')
 	, user = require('./routes/user');
+  //, regist = require('./routes/regist')
 
 var app = express();
 
@@ -26,13 +26,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.post('/phone/regist', phone.regist);
-app.post('/phone/unregist', phone.unregist);
+//app.post('/phone/regist', phone.regist);
+//app.post('/phone/unregist', phone.unregist);
 
 app.post('/user/regist', user.regist);
 app.post('/user/unregist', user.unregist);
-//app.post('/send', main.send);
-//app.post('/location', main.location);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
