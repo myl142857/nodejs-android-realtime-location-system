@@ -104,7 +104,7 @@ exports.unregist = function(req, res){
 		'access_token' : req.body.access_token
 	}
 
-	phonemodel.checkAccessToken(data, function(error, results){
+	phonemodel.getPhoneInfo(data, function(error, results){
 		if(error){
 			message.sendMessage(res, "1000", "get_phone_access_token");
 			return false;

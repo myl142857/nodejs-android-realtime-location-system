@@ -7,3 +7,7 @@ exports.getPassword = function(id, pwd, access_token){
 exports.getAccessToken = function(phoneNumber, regId){
 	return sha1(phoneNumber + sha1(regId));
 }
+
+exports.checkAccessToken = function(origin, compare){
+	return (origin == compare) ? true : false;
+}
