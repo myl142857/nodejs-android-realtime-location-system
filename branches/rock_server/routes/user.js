@@ -81,7 +81,7 @@ exports.unregist = function(req, res){
 			message.sendMessage(res, "1000", "getUserPhone");
 			return false;
 		}else{
-			if(!token.checkAccessToken(results[0]['access_token']){
+			if(!token.checkAccessToken(results[0]['access_token'], req.body.access_token)){
 				message.sendMessage(res, '0003', "access_token");
 				return false;
 			}
