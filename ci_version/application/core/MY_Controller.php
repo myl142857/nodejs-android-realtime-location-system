@@ -1,7 +1,20 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class MY_Controller extends CI_Controller{
+require_once(APPPATH."core/interfaces.php");
+require_once(APPPATH."core/DBController.php");
+
+abstract class MY_Controller extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 	}
 }
+
+abstract class DefaultController extends MY_Controller{
+	public function __construct(){
+		parent::__construct();
+	}
+	abstract public function regist();
+	abstract public function get_info();
+	abstract public function unregist();
+}
+

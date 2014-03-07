@@ -5,8 +5,8 @@ require_once BASEPATH."core/ExceptionCode.php";
  @brief below functions are using for db Exceptions
  */
 class DBExecuteException extends Exception{
-	public function __construct(){
-		parent::__construct("Execute Query Error", ExceptionCode::$DBExcecute);
+	public function __construct($msg = ""){
+		parent::__construct("Execute Query Error : {$msg}", ExceptionCode::$DBExecute);
 	}
 }
 
