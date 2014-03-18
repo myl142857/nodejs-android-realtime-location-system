@@ -341,7 +341,7 @@ class CI_DB_driver {
 				*/
 			}
 			// throw exception
-			throw new DBExecuteException($error_no."-".$error_msg);
+			throw new DBExecuteException($error_no, $error_msg);
 
 			//return FALSE;
 		}
