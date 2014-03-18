@@ -7,12 +7,13 @@ class MY_Model extends CI_Model{
 		parent::__construct();
 		$this->dbc =& DBC::get_instance();
 	}
+
 	public function getConnection($pDBName = "default"){
 		return $this->dbc->getConnection($pDBName);
 	}
 }
 
-abstract class BusinessController extends MY_Model{
+abstract class ServiceController extends MY_Model{
 	public function __construct(){
 		parent::__construct();
 	}

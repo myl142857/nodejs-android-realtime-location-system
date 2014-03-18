@@ -1,6 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class B_user extends BusinessController{
+class S_user extends ServiceController{
 	public function __construct(){
 		parent::__construct();
 	}
@@ -10,10 +10,10 @@ class B_user extends BusinessController{
 		$dbc =& $this->getConnection();
 		$dbc->trans_start();
 		try{
-		$this->m_user->insertUser();
+			$this->m_user->insertUser();
+			$this->m_user2->insertUser2();
 		}catch(Exception $e){
 			print_r($e->getMessage());
 		}
-		$dbc->trans_complete();
 	}
 }

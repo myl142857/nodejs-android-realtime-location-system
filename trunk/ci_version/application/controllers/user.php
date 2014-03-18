@@ -6,8 +6,8 @@ class User extends DefaultController{
 	}
 	public function regist(){
 		try{
-			$this->load->business('b_user');
-			$this->b_user->registUser();
+			$this->load->library('services/s_user');
+			$this->s_user->registUser();
 		}catch(Exception $e){
 			
 		}

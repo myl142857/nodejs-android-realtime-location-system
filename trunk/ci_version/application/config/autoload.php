@@ -64,7 +64,7 @@ $autoload['libraries'] = array('redis');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array();
+$autoload['helper'] = array('exception');
 
 
 /*

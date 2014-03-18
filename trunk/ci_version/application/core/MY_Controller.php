@@ -7,6 +7,14 @@ abstract class MY_Controller extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 	}
+	public function __destruct(){
+		DBC::destroy();
+	}
+	public function response($data = null, $code = 200, $status_msg = ''){
+		set_status_header($code, $status_msg);
+
+		exit(json_encode($data));
+	}
 }
 
 abstract class DefaultController extends MY_Controller{

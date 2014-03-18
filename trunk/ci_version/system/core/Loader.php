@@ -58,7 +58,6 @@ class CI_Loader {
 	 */
 	protected $_ci_model_paths		= array();
 
-	protected $_ci_business_paths		= array();
 	/**
 	 * List of paths to load helpers from
 	 *
@@ -103,7 +102,6 @@ class CI_Loader {
 	 */
 	protected $_ci_models			= array();
 	
-	protected $_ci_businesses			= array();
 	/**
 	 * List of loaded helpers
 	 *
@@ -131,7 +129,6 @@ class CI_Loader {
 		$this->_ci_library_paths = array(APPPATH, BASEPATH);
 		$this->_ci_helper_paths = array(APPPATH, BASEPATH);
 		$this->_ci_model_paths = array(APPPATH);
-		$this->_ci_business_paths = array(APPPATH);
 		$this->_ci_view_paths = array(APPPATH.'views/'	=> TRUE);
 
 		log_message('debug', "Loader Class Initialized");
@@ -216,6 +213,11 @@ class CI_Loader {
 		if ( ! is_null($params) && ! is_array($params))
 		{
 			$params = NULL;
+		}
+
+		if ( ! class_exists('CI_Model'))
+		{
+			load_class('Model', 'core');
 		}
 
 		$this->_ci_load_class($library, $params, $object_name);
@@ -313,98 +315,6 @@ class CI_Loader {
 
 		// couldn't find the model
 		show_error('Unable to locate the model you have specified: '.$model);
-	}
-
-	// --------------------------------------------------------------------
-	/**
-	 * Business Loader
-	 *
-	 * This function lets users load and instantiate businesses.
-	 *
-	 * @param	string	the name of the class
-	 * @param	string	name for the businesses
-	 * @param	bool	database connection
-	 * @return	void
-	 */
-
-	public function business($biz, $name = '', $db_conn = FALSE)
-	{
-		if (is_array($biz))
-		{
-			foreach ($biz as $babe)
-			{
-				$this->biz($babe);
-			}
-			return;
-		}
-
-		if ($biz == '')
-		{
-			return;
-		}
-
-		$path = '';
-
-		if (($last_slash = strrpos($biz, '/')) !== FALSE)
-		{
-			// The path is in front of the last slash
-			$path = substr($biz, 0, $last_slash + 1);
-
-			$biz = substr($biz, $last_slash + 1);
-		}
-
-		if ($name == '')
-		{
-			$name = $biz;
-		}
-
-		if (in_array($name, $this->_ci_businesses, TRUE))
-		{
-			return;
-		}
-
-		$CI =& get_instance();
-		if (isset($CI->$name))
-		{
-			show_error('The model name you are loading is the name of a resource that is already being used: '.$name);
-		}
-
-		$biz = strtolower($biz);
-
-		foreach ($this->_ci_business_paths as $mod_path)
-		{
-			if ( ! file_exists($mod_path.'businesses/'.$path.$biz.'.php'))
-			{
-				continue;
-			}
-
-			if ($db_conn !== FALSE AND ! class_exists('CI_DB'))
-			{
-				if ($db_conn === TRUE)
-				{
-					$db_conn = '';
-				}
-
-				$CI->load->database($db_conn, FALSE, TRUE);
-			}
-
-			if ( ! class_exists('CI_Model'))
-			{
-				load_class('Model', 'core');
-			}
-
-			require_once($mod_path.'businesses/'.$path.$biz.'.php');
-
-			$model = ucfirst($biz);
-
-			$CI->$name = new $biz();
-
-			$this->_ci_businesses[] = $name;
-			return;
-		}
-
-		// couldn't find the model
-		show_error('Unable to locate the model you have specified: '.$biz);
 	}
 
 	// --------------------------------------------------------------------
