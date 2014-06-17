@@ -7,18 +7,16 @@ class Register extends DefaultController{
 	public function regist(){
 		try{
 			$phoneNumber = $this->input->post('phoneNumber', true);
-			$regId = $this->input->post('redId', true);
+			$regId = $this->input->post('regId', true);
 			$os_version = $this->input->post('os_version', true);
 			$model_name = $this->input->post('model_name', true);
 
-			if(empty($phoneNumber))
-				throw new InvalidParamException();
-			if(empty($regId))
+			if(empty($phoneNumber) || empty($regId))
 				throw new InvalidParamException();
 
-		}catch(InvalidParamException $ie){
+			$this->response($this->input->post());
 		}catch(Exception $e){
-			
+			exceptionHandler($e);
 		}
 	}
 	public function get_info(){
