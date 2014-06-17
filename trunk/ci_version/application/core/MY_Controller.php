@@ -13,7 +13,7 @@ abstract class MY_Controller extends CI_Controller{
 	public function response($data = null, $code = 200, $status_msg = ''){
 		set_status_header($code, $status_msg);
 
-		exit(json_encode($data));
+		echo json_encode($data);
 	}
 }
 

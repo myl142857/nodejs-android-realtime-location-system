@@ -189,5 +189,68 @@ class CI_Exceptions {
 }
 // END Exceptions Class
 
+/**
+ @brief the code for exception. this code is personal code.
+ @brief 3xx codes for syntax error
+ @brief 4xx codes for process error
+ @brief 5xx codes for database error
+ @author rock
+ */
+class ExceptionCode{
+	public static $ClassLoader = 401;
+
+	public static $DBExecute = 501;
+	public static $DBInvalidQuery = 502;
+	public static $DBUnableConnect = 503;
+	public static $DBUnableSelectDB = 504;
+	public static $DBUnableSetChar = 505;
+}
+
+class DBException extends Exception{
+	public function __construct($msg, $code=null){
+		parent::__construct($msg, $code);
+	}
+}
+
+/**
+ @brief below functions are using for db Exceptions
+ */
+class DBExecuteException extends DBException{
+	public function __construct($code, $msg){
+		if($code == 1062){
+			parent::__construct("Duplicated: ".$msg);
+		}else{
+			parent::__construct("Execute Query Error : {$code}-{$msg}", ExceptionCode::$DBExecute);
+		}
+	}
+}
+
+class DBInvalidQueryExeption extends DBException{
+	public function __construct(){
+		parent::__construct("Query is Invalid", ExceptionCode::$DBInvalidQuery);
+	}
+}
+
+class DBUnableConnectException extends DBException{
+	public function __construct(){
+		parent::__construct("Unable to Connect", ExceptionCode::$DBUnableConnect);
+	}
+}
+
+class DBUnableSelectDBException extends DBException{
+	public function __construct(){
+		parent::__construct("Unable Select DB", ExceptionCode::$UnableSelectDB);
+	}
+}
+
+class DBUnableSetCharException extends DBException{
+	public function __construct(){
+		parent::__construct("Unable Set Char", ExceptionCode::$DBUnableSetChar);
+	}
+}
+
+/* End of file DBException.php */
+/* Location: ./system/core/DBException.php */
+
 /* End of file Exceptions.php */
 /* Location: ./system/core/Exceptions.php */

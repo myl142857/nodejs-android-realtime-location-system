@@ -11,7 +11,7 @@ class S_user extends ServiceController{
 		$dbc->trans_start();
 		try{
 			$this->m_user->insertUser();
-			$this->m_user2->insertUser2();
+			$rs = $this->m_user2->insertUser2();
 		}catch(Exception $e){
 			print_r($e->getMessage());
 		}
